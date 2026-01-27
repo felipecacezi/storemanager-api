@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import { testRoute } from "./infra/http/routes/test.route.js";
+import { userRoute } from "./infra/http/routes/user.route.js";
 import knexPlugin from "./infra/database/plugins/knex-plugin.js";
 
 const app = fastify({
@@ -7,6 +7,6 @@ const app = fastify({
 });
 
 app.register(knexPlugin);
-app.register(testRoute);
+app.register(userRoute);
 
 export default app;

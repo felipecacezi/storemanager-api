@@ -4,15 +4,7 @@ import type { User } from "../../domain/entities/User.js";
 export class CreateUserUseCase {
     constructor(private userRepository: KnexUserRepository) { }
 
-    async execute(data: any) {
-
-        const user: User = {
-            id: 1,
-            name: 'fernando',
-            email: 'fernando@fernando.com',
-            password: '123456'
-        };
-
+    async execute(user: User) {
         return await this.userRepository.create(user);
     }
 }

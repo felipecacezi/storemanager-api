@@ -7,7 +7,6 @@ export class KnexUserRepository implements UserRepository {
 
     async create(user: User): Promise<User | null> {
         return await this.db("users").insert({
-            id: user.id,
             name: user.name,
             email: user.email,
             password: user.password,
