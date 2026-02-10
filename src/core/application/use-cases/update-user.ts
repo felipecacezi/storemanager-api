@@ -2,14 +2,13 @@ import { KnexUserRepository } from "../../../infra/adapters/knex/user-repository
 import type { User } from "../../domain/entities/User.js";
 import { ErrorMessages } from "../../domain/erros/error-mesages.js";
 
-export class CreateUserUseCase {
+export class UpdateUserUseCase {
     constructor(private userRepository: KnexUserRepository) { }
 
     async execute(user: User) {
-        const objUserFound = await this.userRepository.getUserByEmail(user.email);
-        if (objUserFound) {
-            throw new Error(ErrorMessages.USER_ALREADY_EXISTS);
+        if (!user) {
+            throw new Error();
         }
-        return await this.userRepository.create(user);
+        return await this.userRepository.update(user);
     }
 }
