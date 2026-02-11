@@ -7,6 +7,8 @@ import { PasswordHasherRepository } from "../../../infra/adapters/bcrypt/passwor
 import { UpdateUserUseCase } from "../../../core/application/use-cases/update-user.js"
 import { CreateJwtTokenRepository } from "../../../infra/adapters/jwt/token-utilities-adapter.js";
 
+import { authMiddleware } from "../middleware/auth-middleware.js";
+
 
 export async function userRoute(app: FastifyInstance) {
     const passwordHasherRepository = new PasswordHasherRepository();
@@ -35,5 +37,9 @@ export async function userRoute(app: FastifyInstance) {
 
     app.post('/auth', async (request, reply) => {
         return await userController.authenticate(request, reply);
+    });
+
+    app.get('/teste', { preHandler: authMiddleware }, async (request, reply) => {
+        return { message: 'Token validado com sucesso' };
     });
 }
