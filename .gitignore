@@ -3,3 +3,4 @@ dist/
 .env
 db.sqlite
 src/infra/database/dev.sqlite3
+src/infra/database/prod.sqlite3

@@ -8,6 +8,7 @@ import { UpdateUserUseCase } from "../../../core/application/use-cases/update-us
 import { CreateJwtTokenRepository } from "../../../infra/adapters/jwt/token-utilities-adapter.js";
 
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { refreshToken } from "../middleware/renew-jwt-middleware.js";
 
 
 export async function userRoute(app: FastifyInstance) {
@@ -39,7 +40,10 @@ export async function userRoute(app: FastifyInstance) {
         return await userController.authenticate(request, reply);
     });
 
-    app.get('/teste', { preHandler: authMiddleware }, async (request, reply) => {
+    app.get('/teste', {
+        preHandler: authMiddleware,
+        onSend: refreshToken
+    }, async (request, reply) => {
         return { message: 'Token validado com sucesso' };
     });
 }
