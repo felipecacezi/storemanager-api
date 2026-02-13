@@ -7,8 +7,6 @@ import jwt from 'jsonwebtoken';
 export async function authMiddleware(request: FastifyRequest, reply: FastifyReply) {
     const token = request.headers.authorization?.replace('Bearer ', '');
 
-
-
     if (!token) {
         return reply.status(401).send({ message: ErrorMessages[ErroCodes.TOKEN_NOT_PROVIDED] });
     }

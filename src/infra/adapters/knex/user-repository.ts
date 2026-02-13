@@ -33,4 +33,8 @@ export class KnexUserRepository implements UserRepository {
     async update(user: User): Promise<User | null> {
         return await this.db("users").where({ id: user.id }).update(user);
     }
+
+    async updateToken(id: number, token: string): Promise<void> {
+        await this.db("users").where({ id }).update({ token });
+    }
 }
