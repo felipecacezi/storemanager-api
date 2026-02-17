@@ -7,17 +7,15 @@ import { PasswordHasherRepository } from "../../../infra/adapters/bcrypt/passwor
 import { UpdateUserUseCase } from "../../../core/application/use-cases/update-user.js"
 import { CreateJwtTokenRepository } from "../../../infra/adapters/jwt/token-utilities-adapter.js";
 
-import { authMiddleware } from "../middleware/auth-middleware.js";
-import { refreshToken } from "../middleware/renew-jwt-middleware.js";
-
-
 export async function userRoute(app: FastifyInstance) {
     const passwordHasherRepository = new PasswordHasherRepository();
     const userRepository = new KnexUserRepository(
-        app.knex,
+        app.knex
+    );
+    const createUserUseCase = new CreateUserUseCase(
+        userRepository,
         passwordHasherRepository
     );
-    const createUserUseCase = new CreateUserUseCase(userRepository);
     const updateUserUseCase = new UpdateUserUseCase(userRepository);
     const createJwtTokenRepository = new CreateJwtTokenRepository(app);
     const authenticateUserUseCase = new AuthenticateUserUseCase(
@@ -36,7 +34,12 @@ export async function userRoute(app: FastifyInstance) {
         return await userController.create(request, reply);
     });
 
+    app.post('/user/forgot-password', async (request, reply) => {
+        return await userController.forgotPassword(request, reply);
+    });
+
     app.post('/auth', async (request, reply) => {
         return await userController.authenticate(request, reply);
     });
+
 }
