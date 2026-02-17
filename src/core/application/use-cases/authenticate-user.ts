@@ -15,12 +15,12 @@ export class AuthenticateUserUseCase {
     async execute(email: string, password: string) {
         const objUserFound = await this.userRepository.getUserByEmail(email);
         if (!objUserFound || !objUserFound.password) {
-            throw new Error(`${ErrorMessages.USER_UNAUTHORIZED} (cod.: 401001)`);
+            throw new Error(`${ErrorMessages.USER_UNAUTHORIZED}`);
         }
 
         const isPasswordValid = await this.passwordHasherRepository.compare(password, objUserFound.password);
         if (!isPasswordValid) {
-            throw new Error(`${ErrorMessages.USER_UNAUTHORIZED} (cod.: 401002)`);
+            throw new Error(`${ErrorMessages.USER_UNAUTHORIZED}`);
         }
 
         const token = await this.createJwtTokenRepository.generateToken({ email: objUserFound.email, id: objUserFound.id });

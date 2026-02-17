@@ -39,11 +39,4 @@ export async function userRoute(app: FastifyInstance) {
     app.post('/auth', async (request, reply) => {
         return await userController.authenticate(request, reply);
     });
-
-    app.get('/teste', {
-        preHandler: authMiddleware,
-        onSend: refreshToken
-    }, async (request, reply) => {
-        return { message: 'Token validado com sucesso' };
-    });
 }

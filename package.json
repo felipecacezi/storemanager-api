@@ -6,6 +6,7 @@
   "scripts": {
     "dev:start": "tsx watch src/server.ts | npx pino-pretty",
     "dev:test": "mocha --import=tsx src/**/*.test.ts",
+    "dev:covertest": "c8 mocha --import=tsx src/**/*.test.ts",
     "knex": "NODE_OPTIONS='--import tsx --no-warnings' knex",
     "knex:migrate": "NODE_OPTIONS='--import tsx --no-warnings' knex migrate:latest",
     "knex:rollback": "NODE_OPTIONS='--import tsx --no-warnings' knex migrate:rollback"
@@ -15,15 +16,18 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
     "@types/bcrypt": "^6.0.0",
     "@types/chai": "^5.2.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.0.10",
     "@types/supertest": "^6.0.3",
+    "c8": "^10.1.3",
     "chai": "^6.2.2",
     "mocha": "^11.7.5",
     "pino-pretty": "^13.1.3",
+    "sinon": "^21.0.1",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
@@ -36,6 +40,7 @@
     "fastify-plugin": "^5.1.0",
     "jsonwebtoken": "^9.0.3",
     "knex": "^3.1.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "zod": "^4.3.6"
   }
 }
