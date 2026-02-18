@@ -8,8 +8,8 @@ export interface User {
 
 export interface UserUpdate {
     id: number;
-    name?: string;
-    email?: string;
-    password?: string;
-    token?: string;
+    name?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    token?: string | undefined;
 }

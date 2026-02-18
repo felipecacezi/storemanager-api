@@ -17,4 +17,5 @@ export const ErrorMessages = {
     [ErroCodes.USER_NAME_INVALID]: "O nome informado é inválido (cod.: 400014)",
     [ErroCodes.USER_NOT_FOUND]: "Usuário não encontrado (cod.: 400015)",
     [ErroCodes.USER_ID_REQUIRED]: "O id do usuário é obrigatório (cod.: 400016)",
+    [ErroCodes.USER_EMAIL_NOT_FOUND]: "O e-mail informado não foi encontrado (cod.: 400017)",
 }

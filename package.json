@@ -6,6 +6,7 @@
   "scripts": {
     "dev:start": "tsx watch src/server.ts | npx pino-pretty",
     "dev:test": "mocha --import=tsx src/**/*.test.ts",
+    "dev:testonly": "mocha -g $TEST_MATCH",
     "dev:covertest": "c8 mocha --import=tsx src/**/*.test.ts",
     "knex": "NODE_OPTIONS='--import tsx --no-warnings' knex",
     "knex:migrate": "NODE_OPTIONS='--import tsx --no-warnings' knex migrate:latest",
@@ -36,10 +37,12 @@
   "dependencies": {
     "@fastify/jwt": "^10.0.0",
     "bcrypt": "^6.0.0",
+    "dotenv": "^17.3.1",
     "fastify": "^5.7.1",
     "fastify-plugin": "^5.1.0",
     "jsonwebtoken": "^9.0.3",
     "knex": "^3.1.0",
+    "mailtrap": "^4.4.0",
     "sqlite3": "^5.1.7",
     "zod": "^4.3.6"
   }
