@@ -1,11 +1,13 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { CreateUserUseCase } from "../../../core/application/use-cases/create-user.js";
 import type { AuthenticateUserUseCase } from "../../../core/application/use-cases/authenticate-user.js";
+import type { ForgotPasswordUseCase } from "../../../core/application/use-cases/forgot-password.js";
 
 export class UserController {
     constructor(
         private createUserUseCase: CreateUserUseCase,
-        private authenticateUserUseCase: AuthenticateUserUseCase
+        private authenticateUserUseCase: AuthenticateUserUseCase,
+        private forgotPasswordUseCase: ForgotPasswordUseCase
     ) { }
 
     async create(request: FastifyRequest, reply: FastifyReply) {
@@ -18,5 +20,11 @@ export class UserController {
         const { email, password } = request.body as any;
         const authenticatedUser = await this.authenticateUserUseCase.execute(email, password);
         return reply.status(200).send({ success: true, message: `Usuário "${authenticatedUser.name}" autenticado com sucesso!`, token: authenticatedUser.token });
+    }
+
+    async forgotPassword(request: FastifyRequest, reply: FastifyReply) {
+        const { email } = request.body as any;
+        await this.forgotPasswordUseCase.execute(email);
+        return reply.status(200).send({ success: true, message: "Email enviado com sucesso!" });
     }
 }

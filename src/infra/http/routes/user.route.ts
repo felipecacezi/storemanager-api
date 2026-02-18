@@ -6,6 +6,10 @@ import { KnexUserRepository } from "../../adapters/knex/user-repository.js";
 import { PasswordHasherRepository } from "../../../infra/adapters/bcrypt/password-hasher-repository.js";
 import { UpdateUserUseCase } from "../../../core/application/use-cases/update-user.js"
 import { CreateJwtTokenRepository } from "../../../infra/adapters/jwt/token-utilities-adapter.js";
+import { ForgotPasswordUseCase } from "../../../core/application/use-cases/forgot-password.js";
+import { SendMailUseCase } from "../../../core/application/use-cases/send-mail.js";
+import { MailtrapEmailAdapter } from "../../adapters/email/mailtrap-email.adapter.js";
+import { CryptoPasswordGenerator } from "../../utils/crypto-password-generator.adapter.js";
 
 export async function userRoute(app: FastifyInstance) {
     const passwordHasherRepository = new PasswordHasherRepository();
@@ -16,7 +20,10 @@ export async function userRoute(app: FastifyInstance) {
         userRepository,
         passwordHasherRepository
     );
-    const updateUserUseCase = new UpdateUserUseCase(userRepository);
+    const updateUserUseCase = new UpdateUserUseCase(
+        userRepository,
+        passwordHasherRepository
+    );
     const createJwtTokenRepository = new CreateJwtTokenRepository(app);
     const authenticateUserUseCase = new AuthenticateUserUseCase(
         userRepository,
@@ -25,9 +32,19 @@ export async function userRoute(app: FastifyInstance) {
         createJwtTokenRepository
     );
 
+    const mailtrapEmailAdapter = new MailtrapEmailAdapter();
+    const sendMailUseCase = new SendMailUseCase(mailtrapEmailAdapter);
+    const cryptoPasswordGenerator = new CryptoPasswordGenerator();
+    const forgotPasswordUseCase = new ForgotPasswordUseCase(
+        userRepository,
+        sendMailUseCase,
+        cryptoPasswordGenerator,
+        updateUserUseCase
+    );
     const userController = new UserController(
         createUserUseCase,
-        authenticateUserUseCase
+        authenticateUserUseCase,
+        forgotPasswordUseCase
     );
 
     app.post('/user', async (request, reply) => {
