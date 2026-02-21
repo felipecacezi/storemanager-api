@@ -6,6 +6,7 @@ import sinon from "sinon";
 
 describe('Update user cases tests', () => {
     let userRepositoryMock: any;
+    let passwordHasherMock: any;
     let useCase: UpdateUserUseCase;
 
     beforeEach(() => {
@@ -13,9 +14,14 @@ describe('Update user cases tests', () => {
             getUserById: sinon.stub(),
             update: sinon.stub()
         };
+        passwordHasherMock = {
+            hash: sinon.stub().resolves('hashed_password'),
+            compare: sinon.stub()
+        };
 
         useCase = new UpdateUserUseCase(
-            userRepositoryMock
+            userRepositoryMock,
+            passwordHasherMock
         );
     });
 

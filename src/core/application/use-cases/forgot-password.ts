@@ -37,11 +37,10 @@ export class ForgotPasswordUseCase {
         });
 
         const newPassUser = { ...user, password: String(tempPassword) };
+
         try {
             await this.updateUserUseCase.execute(newPassUser);
         } catch (error) {
-            console.log('error', error);
-            return
             throw new Error(ErrorMessages[ErroCodes.USER_EMAIL_NOT_FOUND]);
         }
 
