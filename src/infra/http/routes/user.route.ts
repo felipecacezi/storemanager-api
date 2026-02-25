@@ -10,6 +10,9 @@ import { ForgotPasswordUseCase } from "../../../core/application/use-cases/forgo
 import { SendMailUseCase } from "../../../core/application/use-cases/send-mail.js";
 import { MailtrapEmailAdapter } from "../../adapters/email/mailtrap-email.adapter.js";
 import { CryptoPasswordGenerator } from "../../utils/crypto-password-generator.adapter.js";
+import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
+import { refreshToken } from "../middleware/renew-jwt-middleware.js";
 
 export async function userRoute(app: FastifyInstance) {
     const passwordHasherRepository = new PasswordHasherRepository();
@@ -44,7 +47,8 @@ export async function userRoute(app: FastifyInstance) {
     const userController = new UserController(
         createUserUseCase,
         authenticateUserUseCase,
-        forgotPasswordUseCase
+        forgotPasswordUseCase,
+        updateUserUseCase
     );
 
     app.post('/user', async (request, reply) => {
@@ -57,6 +61,15 @@ export async function userRoute(app: FastifyInstance) {
 
     app.post('/auth', async (request, reply) => {
         return await userController.authenticate(request, reply);
+    });
+
+    app.patch('/user', {
+        onRequest: [authMiddleware, companyMiddleware],
+        preHandler: [async (request, reply) => {
+            await refreshToken(request, reply, {});
+        }]
+    }, async (request, reply) => {
+        return await userController.update(request, reply);
     });
 
 }

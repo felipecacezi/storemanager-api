@@ -21,7 +21,7 @@ export class UpdateClientUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const clientExists = await this.clientRepository.getById(result.data.id);
+        const clientExists = await this.clientRepository.getById(result.data.id, client.company_id);
         if (!clientExists) {
             throw new Error(ErrorMessages.CLIENT_NOT_FOUND);
         }

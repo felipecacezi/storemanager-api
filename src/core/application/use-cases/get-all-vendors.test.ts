@@ -46,14 +46,14 @@ describe('Get all vendors cases tests', () => {
                 updatedAt: faker.date.recent(),
             },
         ]);
-        const vendors = await getAllVendorsUseCase.execute({ page: 1, limit: 10 });
+        const vendors = await getAllVendorsUseCase.execute({ page: 1, limit: 10, company_id: 1 });
         expect(vendors).to.be.an('array');
         expect(vendors).to.have.lengthOf(3);
     });
 
     it('should throw an error if page is not provided', async () => {
         try {
-            await getAllVendorsUseCase.execute({ page: 0, limit: 10 });
+            await getAllVendorsUseCase.execute({ page: 0, limit: 10, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'A página do fornecedor é obrigatória (cod.: 400040)');
@@ -62,7 +62,7 @@ describe('Get all vendors cases tests', () => {
 
     it('should throw an error if limit is not provided', async () => {
         try {
-            await getAllVendorsUseCase.execute({ page: 1, limit: 0 });
+            await getAllVendorsUseCase.execute({ page: 1, limit: 0, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'O limite do fornecedor é obrigatório (cod.: 400042)');

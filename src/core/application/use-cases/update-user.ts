@@ -28,14 +28,16 @@ export class UpdateUserUseCase {
             throw new Error(ErrorMessages.USER_NOT_FOUND);
         }
 
-        const hashedPassword = await this.passwordHasherRepository.hash(user.password ?? '');
         const userUpdate: UserUpdate = {
             id: user.id,
-            name: user.name,
             email: user.email,
-            password: hashedPassword,
+            password: undefined,
             token: user.token
         };
+
+        if (userUpdate.password) {
+            userUpdate.password = await this.passwordHasherRepository.hash(userUpdate.password);
+        }
 
         return await this.userRepository.update(userUpdate);
     }

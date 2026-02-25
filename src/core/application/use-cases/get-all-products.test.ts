@@ -43,14 +43,14 @@ describe('Get all products cases tests', () => {
                 inventory: faker.number.int({ min: 0, max: 1000 }),
             },
         ]);
-        const products = await getAllProductsUseCase.execute({ page: 1, limit: 10 });
+        const products = await getAllProductsUseCase.execute({ page: 1, limit: 10, company_id: 1 });
         expect(products).to.be.an('array');
         expect(products).to.have.lengthOf(3);
     });
 
     it('should throw an error if page is not provided', async () => {
         try {
-            await getAllProductsUseCase.execute({ page: 0, limit: 10 });
+            await getAllProductsUseCase.execute({ page: 0, limit: 10, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'A página é obrigatória (cod.: 400052)');
@@ -59,7 +59,7 @@ describe('Get all products cases tests', () => {
 
     it('should throw an error if limit is not provided', async () => {
         try {
-            await getAllProductsUseCase.execute({ page: 1, limit: 0 });
+            await getAllProductsUseCase.execute({ page: 1, limit: 0, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'O limite é obrigatório (cod.: 400054)');

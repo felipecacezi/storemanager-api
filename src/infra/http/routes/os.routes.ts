@@ -9,6 +9,7 @@ import { UpdateServiceOrderUseCase } from "../../../core/application/use-cases/u
 import { DeleteServiceOrderUseCase } from "../../../core/application/use-cases/delete-service-order.js";
 import { GetAllServiceOrdersUseCase } from "../../../core/application/use-cases/get-all-service-orders.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function osRoute(app: FastifyInstance) {
     const serviceOrderRepository = new KnexServiceOrderRepository(app.knex);
@@ -34,6 +35,7 @@ export async function osRoute(app: FastifyInstance) {
     );
 
     app.addHook('onRequest', authMiddleware);
+    app.addHook('onRequest', companyMiddleware);
 
     app.post('/service-orders', async (request, reply) => {
         return await controller.create(request, reply);

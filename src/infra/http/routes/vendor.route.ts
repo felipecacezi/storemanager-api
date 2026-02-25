@@ -6,6 +6,7 @@ import { UpdateVendorUseCase } from "../../../core/application/use-cases/update-
 import { DeleteVendorUseCase } from "../../../core/application/use-cases/delete-vendor.js";
 import { GetAllVendorsUseCase } from "../../../core/application/use-cases/get-all-vendors.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function vendorRoute(app: FastifyInstance) {
     const vendorRepository = new KnexVendorRepository(app.knex);
@@ -23,6 +24,7 @@ export async function vendorRoute(app: FastifyInstance) {
     );
 
     app.addHook('onRequest', authMiddleware);
+    app.addHook('onRequest', companyMiddleware);
 
     app.post('/vendors', async (request, reply) => {
         return await vendorController.create(request, reply);

@@ -6,6 +6,7 @@ import { UpdateServiceUseCase } from "../../../core/application/use-cases/update
 import { DeleteServiceUseCase } from "../../../core/application/use-cases/delete-service.js";
 import { GetAllServicesUseCase } from "../../../core/application/use-cases/get-all-services.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function serviceRoute(app: FastifyInstance) {
     const serviceRepository = new KnexServiceRepository(app.knex);
@@ -23,6 +24,7 @@ export async function serviceRoute(app: FastifyInstance) {
     );
 
     app.addHook('onRequest', authMiddleware);
+    app.addHook('onRequest', companyMiddleware);
 
     app.post('/services', async (request, reply) => {
         return await serviceController.create(request, reply);

@@ -7,7 +7,7 @@ export class GetAllServicesUseCase {
         private serviceRepository: KnexServiceRepository
     ) { }
 
-    async execute(params: { page: number, limit: number }) {
+    async execute(params: { page: number, limit: number, company_id: number }) {
         const schema = z.object({
             page: z.number({
                 required_error: ErrorMessages.SERVICE_PAGE_REQUIRED,
@@ -29,7 +29,7 @@ export class GetAllServicesUseCase {
         }
 
         const { page, limit } = result.data;
-        const services = await this.serviceRepository.getAll(page, limit);
+        const services = await this.serviceRepository.getAll(page, limit, params.company_id);
         return services;
     }
 }

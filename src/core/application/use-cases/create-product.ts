@@ -27,7 +27,7 @@ export class CreateProductUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const productExists = await this.productRepository.getByName(result.data.name);
+        const productExists = await this.productRepository.getByName(result.data.name, product.company_id);
         if (productExists) {
             throw new Error(ErrorMessages.PRODUCT_ALREADY_EXISTS);
         }

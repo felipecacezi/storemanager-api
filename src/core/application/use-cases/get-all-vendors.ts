@@ -7,7 +7,7 @@ export class GetAllVendorsUseCase {
         private vendorRepository: KnexVendorRepository
     ) { }
 
-    async execute(params: { page: number, limit: number }) {
+    async execute(params: { page: number, limit: number, company_id: number }) {
         const schema = z.object({
             page: z.number({
                 required_error: ErrorMessages.VENDOR_PAGE_REQUIRED,
@@ -29,7 +29,7 @@ export class GetAllVendorsUseCase {
         }
 
         const { page, limit } = result.data;
-        const vendors = await this.vendorRepository.getAll(page, limit);
+        const vendors = await this.vendorRepository.getAll(page, limit, params.company_id);
         return vendors;
     }
 }

@@ -1,5 +1,6 @@
 export interface Client {
     id?: number;
+    company_id: number;
     name: string;
     email: string;
     document: string;
@@ -20,6 +21,7 @@ export interface Client {
 
 export interface ClientUpdate {
     id: number;
+    company_id: number;
     name?: string;
     email?: string;
     document?: string;

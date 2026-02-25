@@ -30,12 +30,13 @@ describe('Update user cases tests', () => {
     });
 
     it('user successfully updated', async () => {
-        let fakeUser = {
+        const fakeUser = {
             id: 1,
-            name: faker.person.fullName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
-        }
+            password: faker.internet.password(),
+            confirm_password: faker.internet.password()
+        };
+        fakeUser.confirm_password = fakeUser.password;
 
         userRepositoryMock.getUserById.resolves(fakeUser);
         userRepositoryMock.update.resolves(fakeUser);
@@ -45,46 +46,81 @@ describe('Update user cases tests', () => {
         expect(result).to.have.property('id', 1);
         expect(userRepositoryMock.getUserById.calledWith(fakeUser.id)).to.be.true;
         expect(userRepositoryMock.update.calledOnce).to.be.true;
-    })
+    });
 
     it('user not found', async () => {
-        let fakeUser = {
+        const fakeUser = {
             id: 1,
-            name: faker.person.fullName(),
             email: faker.internet.email(),
             password: faker.internet.password()
-        }
+        };
 
         userRepositoryMock.getUserById.resolves(null);
         userRepositoryMock.update.resolves(null);
 
         try {
-            const result = await useCase.execute(fakeUser);
+            await useCase.execute(fakeUser as any);
         } catch (error: any) {
             expect(error.message).to.equal("Usuário não encontrado (cod.: 400015)");
         }
 
         expect(userRepositoryMock.update.called).to.be.false;
         expect(userRepositoryMock.getUserById.calledWith(fakeUser.id)).to.be.true;
-    })
+    });
 
     it('user id is required', async () => {
-        let fakeUser = {
-            name: faker.person.fullName(),
+        const fakeUser = {
             email: faker.internet.email(),
             password: faker.internet.password()
-        }
+        };
 
         userRepositoryMock.getUserById.resolves(null);
         userRepositoryMock.update.resolves(null);
 
         try {
-            const result = await useCase.execute(fakeUser);
+            await useCase.execute(fakeUser as any);
         } catch (error: any) {
             expect(error.message).to.equal("O id do usuário é obrigatório (cod.: 400016)");
         }
 
         expect(userRepositoryMock.update.called).to.be.false;
         expect(userRepositoryMock.getUserById.called).to.be.false;
-    })
+    });
+
+    it('confirm password is required when password is provided', async () => {
+        const fakeUser = {
+            id: 1,
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        };
+
+        userRepositoryMock.getUserById.resolves({ id: 1 });
+
+        try {
+            await useCase.execute(fakeUser as any);
+        } catch (error: any) {
+            expect(error.message).to.equal("A confirmação de senha é obrigatória (cod.: 400083)");
+        }
+
+        expect(userRepositoryMock.update.called).to.be.false;
+    });
+
+    it('should throw error when password and confirm password do not match', async () => {
+        const fakeUser = {
+            id: 1,
+            email: faker.internet.email(),
+            password: faker.internet.password(),
+            confirm_password: faker.internet.password()
+        };
+
+        userRepositoryMock.getUserById.resolves({ id: 1 });
+
+        try {
+            await useCase.execute(fakeUser as any);
+        } catch (error: any) {
+            expect(error.message).to.equal("Senha e confirmação de senha não coincidem (cod.: 400084)");
+        }
+
+        expect(userRepositoryMock.update.called).to.be.false;
+    });
 });

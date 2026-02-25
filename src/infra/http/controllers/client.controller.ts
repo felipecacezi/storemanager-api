@@ -13,27 +13,31 @@ export class ClientController {
     ) { }
 
     async create(request: FastifyRequest, reply: FastifyReply) {
+        const company_id = Number(request.headers['x-company-id']);
         const { name, email, document, phone, is_whatsapp, country, address, number, city, neighborhood, state, zipcode, complement } = request.body as any;
-        await this.createClientUseCase.execute({ name, email, document, phone, is_whatsapp, country, address, number, city, neighborhood, state, zipcode, complement });
+        await this.createClientUseCase.execute({ company_id, name, email, document, phone, is_whatsapp, country, address, number, city, neighborhood, state, zipcode, complement });
         return reply.status(201).send({ success: true, message: "Cliente criado com sucesso!" });
     }
 
     async update(request: FastifyRequest, reply: FastifyReply) {
+        const company_id = Number(request.headers['x-company-id']);
         const { id } = request.params as any;
         const data = request.body as any;
-        await this.updateClientUseCase.execute({ id: Number(id), ...data });
+        await this.updateClientUseCase.execute({ id: Number(id), company_id, ...data });
         return reply.status(200).send({ success: true, message: "Cliente atualizado com sucesso!" });
     }
 
     async delete(request: FastifyRequest, reply: FastifyReply) {
+        const company_id = Number(request.headers['x-company-id']);
         const { id } = request.params as any;
-        await this.deleteClientUseCase.execute({ id: Number(id) });
+        await this.deleteClientUseCase.execute({ id: Number(id), company_id });
         return reply.status(200).send({ success: true, message: "Cliente removido com sucesso!" });
     }
 
     async getAll(request: FastifyRequest, reply: FastifyReply) {
+        const company_id = Number(request.headers['x-company-id']);
         const { page, limit } = request.query as any;
-        const clients = await this.getAllClientsUseCase.execute({ page: Number(page), limit: Number(limit) });
+        const clients = await this.getAllClientsUseCase.execute({ page: Number(page), limit: Number(limit), company_id });
         return reply.status(200).send({ success: true, data: clients });
     }
 }

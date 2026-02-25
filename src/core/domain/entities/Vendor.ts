@@ -1,5 +1,6 @@
 export interface Vendor {
     id?: number;
+    company_id: number;
     name: string;
     email: string;
     document: string;
@@ -20,6 +21,7 @@ export interface Vendor {
 
 export interface VendorUpdate {
     id: number;
+    company_id: number;
     name?: string;
     email?: string;
     document?: string;

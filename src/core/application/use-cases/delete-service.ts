@@ -21,11 +21,11 @@ export class DeleteServiceUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const serviceExists = await this.serviceRepository.getById(result.data.id);
+        const serviceExists = await this.serviceRepository.getById(result.data.id, service.company_id);
         if (!serviceExists) {
             throw new Error(ErrorMessages.SERVICE_NOT_FOUND);
         }
 
-        return await this.serviceRepository.update({ id: result.data.id, status: false });
+        return await this.serviceRepository.update({ id: result.data.id, company_id: service.company_id, status: false });
     }
 }

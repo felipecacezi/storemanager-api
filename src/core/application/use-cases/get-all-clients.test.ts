@@ -48,14 +48,14 @@ describe('Get all clients cases tests', () => {
                 updatedAt: faker.date.recent(),
             },
         ]);
-        const clients = await getAllClientsUseCase.execute({ page: 1, limit: 10 });
+        const clients = await getAllClientsUseCase.execute({ page: 1, limit: 10, company_id: 1 });
         expect(clients).to.be.an('array');
         expect(clients).to.have.lengthOf(3);
     });
 
     it('should throw an error if page is not provided', async () => {
         try {
-            await getAllClientsUseCase.execute({ page: 0, limit: 10 });
+            await getAllClientsUseCase.execute({ page: 0, limit: 10, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'A página é obrigatória (cod.: 400026)');
@@ -64,7 +64,7 @@ describe('Get all clients cases tests', () => {
 
     it('should throw an error if limit is not provided', async () => {
         try {
-            await getAllClientsUseCase.execute({ page: 1, limit: 0 });
+            await getAllClientsUseCase.execute({ page: 1, limit: 0, company_id: 1 });
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error).to.have.property('message', 'O limite é obrigatório (cod.: 400028)');

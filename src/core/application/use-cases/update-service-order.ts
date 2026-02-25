@@ -26,7 +26,7 @@ export class UpdateServiceOrderUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const serviceOrderExists = await this.serviceOrderRepository.getById(result.data.id);
+        const serviceOrderExists = await this.serviceOrderRepository.getById(result.data.id, serviceOrder.company_id);
         if (!serviceOrderExists) {
             throw new Error(ErrorMessages.SERVICE_ORDER_NOT_FOUND);
         }

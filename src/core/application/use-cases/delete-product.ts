@@ -21,11 +21,11 @@ export class DeleteProductUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const productExists = await this.productRepository.getById(result.data.id);
+        const productExists = await this.productRepository.getById(result.data.id, product.company_id);
         if (!productExists) {
             throw new Error(ErrorMessages.PRODUCT_NOT_FOUND);
         }
 
-        return await this.productRepository.update({ id: result.data.id, status: false });
+        return await this.productRepository.update({ id: result.data.id, company_id: product.company_id, status: false });
     }
 }

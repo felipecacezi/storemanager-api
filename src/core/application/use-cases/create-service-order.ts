@@ -44,17 +44,17 @@ export class CreateServiceOrderUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const clientExists = await this.clientRepository.getById(result.data.client_id);
+        const clientExists = await this.clientRepository.getById(result.data.client_id, serviceOrder.company_id);
         if (!clientExists) {
             throw new Error(ErrorMessages.CLIENT_NOT_FOUND);
         }
 
-        const serviceExists = await this.serviceRepository.getById(result.data.service_id);
+        const serviceExists = await this.serviceRepository.getById(result.data.service_id, serviceOrder.company_id);
         if (!serviceExists) {
             throw new Error(ErrorMessages.SERVICE_NOT_FOUND);
         }
 
-        const productExists = await this.productRepository.getById(result.data.product_id);
+        const productExists = await this.productRepository.getById(result.data.product_id, serviceOrder.company_id);
         if (!productExists) {
             throw new Error(ErrorMessages.PRODUCT_NOT_FOUND);
         }

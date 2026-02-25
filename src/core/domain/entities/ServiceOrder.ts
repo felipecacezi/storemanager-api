@@ -2,6 +2,7 @@ export type ServiceOrderStatus = 'pendente' | 'em_andamento' | 'concluido' | 'fi
 
 export interface ServiceOrder {
     id?: number;
+    company_id: number;
     client_id: number;
     description: string;
     service_id: number;
@@ -14,6 +15,7 @@ export interface ServiceOrder {
 
 export interface ServiceOrderUpdate {
     id: number;
+    company_id: number;
     client_id?: number;
     description?: string;
     service_id?: number;

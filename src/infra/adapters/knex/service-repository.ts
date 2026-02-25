@@ -10,6 +10,7 @@ export class KnexServiceRepository implements ServiceRepository {
     async create(service: Service): Promise<Service | null> {
         return await this.db("services").insert({
             id: service.id,
+            company_id: service.company_id,
             name: service.name,
             description: service.description,
             service_price: service.service_price,
@@ -18,26 +19,27 @@ export class KnexServiceRepository implements ServiceRepository {
     }
 
     async update(service: ServiceUpdate): Promise<ServiceUpdate | null> {
-        return await this.db("services").where({ id: service.id }).update(service);
+        const { company_id, ...updateData } = service;
+        return await this.db("services").where({ id: service.id, company_id }).update(updateData);
     }
 
-    async delete(id: number): Promise<boolean> {
-        return await this.db("services").where({ id }).update({ status: false });
+    async delete(id: number, companyId: number): Promise<boolean> {
+        return await this.db("services").where({ id, company_id: companyId }).update({ status: false });
     }
 
-    async getById(id: number): Promise<Service | null> {
-        return await this.db("services").where({ id }).first();
+    async getById(id: number, companyId: number): Promise<Service | null> {
+        return await this.db("services").where({ id, company_id: companyId }).first();
     }
 
-    async getAll(page: number, limit: number, search?: string): Promise<Service[]> {
-        return await this.db("services").where({ status: true }).limit(limit).offset((page - 1) * limit);
+    async getAll(page: number, limit: number, companyId: number, search?: string): Promise<Service[]> {
+        return await this.db("services").where({ status: true, company_id: companyId }).limit(limit).offset((page - 1) * limit);
     }
 
-    async count(search?: string): Promise<number> {
-        return await this.db("services").where({ status: true }).count();
+    async count(companyId: number, search?: string): Promise<number> {
+        return await this.db("services").where({ status: true, company_id: companyId }).count();
     }
 
-    async getByName(name: string): Promise<Service | null> {
-        return await this.db("services").where({ name }).first();
+    async getByName(name: string, companyId: number): Promise<Service | null> {
+        return await this.db("services").where({ name, company_id: companyId }).first();
     }
 }

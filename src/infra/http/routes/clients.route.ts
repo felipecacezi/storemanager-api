@@ -6,6 +6,7 @@ import { UpdateClientUseCase } from "../../../core/application/use-cases/update-
 import { DeleteClientUseCase } from "../../../core/application/use-cases/delete-client.js";
 import { GetAllClientsUseCase } from "../../../core/application/use-cases/get-all-clients.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function clientRoute(app: FastifyInstance) {
     const clientRepository = new KnexClientRepository(app.knex);
@@ -23,6 +24,7 @@ export async function clientRoute(app: FastifyInstance) {
     );
 
     app.addHook('onRequest', authMiddleware);
+    app.addHook('onRequest', companyMiddleware);
 
     app.post('/clients', async (request, reply) => {
         return await clientController.create(request, reply);

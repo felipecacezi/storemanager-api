@@ -29,7 +29,7 @@ export class CreateClientUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const clientExists = await this.clientRepository.getByEmail(result.data.email);
+        const clientExists = await this.clientRepository.getByEmail(result.data.email, client.company_id);
         if (clientExists) {
             throw new Error(ErrorMessages.CLIENT_ALREADY_EXISTS);
         }

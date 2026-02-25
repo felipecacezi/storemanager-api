@@ -6,6 +6,7 @@ import { UpdateProductUseCase } from "../../../core/application/use-cases/update
 import { DeleteProductUseCase } from "../../../core/application/use-cases/delete-product.js";
 import { GetAllProductsUseCase } from "../../../core/application/use-cases/get-all-products.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function productRoute(app: FastifyInstance) {
     const productRepository = new KnexProductRepository(app.knex);
@@ -23,6 +24,7 @@ export async function productRoute(app: FastifyInstance) {
     );
 
     app.addHook('onRequest', authMiddleware);
+    app.addHook('onRequest', companyMiddleware);
 
     app.post('/products', async (request, reply) => {
         return await productController.create(request, reply);

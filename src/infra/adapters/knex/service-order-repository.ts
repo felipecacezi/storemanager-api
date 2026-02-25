@@ -10,6 +10,7 @@ export class KnexServiceOrderRepository implements ServiceOrderRepository {
     async create(serviceOrder: ServiceOrder): Promise<ServiceOrder | null> {
         return await this.db("service_orders").insert({
             id: serviceOrder.id,
+            company_id: serviceOrder.company_id,
             client_id: serviceOrder.client_id,
             description: serviceOrder.description,
             service_id: serviceOrder.service_id,
@@ -20,25 +21,26 @@ export class KnexServiceOrderRepository implements ServiceOrderRepository {
     }
 
     async update(serviceOrder: ServiceOrderUpdate): Promise<ServiceOrderUpdate | null> {
-        return await this.db("service_orders").where({ id: serviceOrder.id }).update(serviceOrder);
+        const { company_id, ...updateData } = serviceOrder;
+        return await this.db("service_orders").where({ id: serviceOrder.id, company_id }).update(updateData);
     }
 
-    async delete(id: number): Promise<boolean> {
-        return await this.db("service_orders").where({ id }).update({ status: false });
+    async delete(id: number, companyId: number): Promise<boolean> {
+        return await this.db("service_orders").where({ id, company_id: companyId }).update({ status: false });
     }
 
-    async getById(id: number): Promise<ServiceOrder | null> {
-        return await this.db("service_orders").where({ id }).first();
+    async getById(id: number, companyId: number): Promise<ServiceOrder | null> {
+        return await this.db("service_orders").where({ id, company_id: companyId }).first();
     }
 
-    async getAll(page: number, limit: number, search?: string): Promise<ServiceOrder[]> {
+    async getAll(page: number, limit: number, companyId: number, search?: string): Promise<ServiceOrder[]> {
         return await this.db("service_orders")
-            .where({ status: true })
+            .where({ status: true, company_id: companyId })
             .limit(limit)
             .offset((page - 1) * limit);
     }
 
-    async count(search?: string): Promise<number> {
-        return await this.db("service_orders").where({ status: true }).count();
+    async count(companyId: number, search?: string): Promise<number> {
+        return await this.db("service_orders").where({ status: true, company_id: companyId }).count();
     }
 }

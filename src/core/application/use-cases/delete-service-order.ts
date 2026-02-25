@@ -21,11 +21,11 @@ export class DeleteServiceOrderUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const serviceOrderExists = await this.serviceOrderRepository.getById(result.data.id);
+        const serviceOrderExists = await this.serviceOrderRepository.getById(result.data.id, serviceOrder.company_id);
         if (!serviceOrderExists) {
             throw new Error(ErrorMessages.SERVICE_ORDER_NOT_FOUND);
         }
 
-        return await this.serviceOrderRepository.update({ id: result.data.id, status: false });
+        return await this.serviceOrderRepository.update({ id: result.data.id, company_id: serviceOrder.company_id, status: false });
     }
 }

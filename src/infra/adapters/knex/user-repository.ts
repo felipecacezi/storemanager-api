@@ -12,6 +12,7 @@ export class KnexUserRepository implements UserRepository {
             name: user.name,
             email: user.email,
             password: user.password,
+            company_id: user.company_id ?? null,
         });
     }
 
@@ -24,7 +25,10 @@ export class KnexUserRepository implements UserRepository {
     }
 
     async update(user: UserUpdate): Promise<UserUpdate | null> {
-        return await this.db("users").where({ id: user.id }).update(user);
+        const { company_id, ...updateData } = user;
+        const query = this.db("users").where({ id: user.id });
+        if (company_id) query.andWhere({ company_id });
+        return await query.update(updateData);
     }
 
     async updateToken(id: number, token: string): Promise<void> {

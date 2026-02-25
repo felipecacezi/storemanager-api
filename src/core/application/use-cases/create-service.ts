@@ -23,7 +23,7 @@ export class CreateServiceUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const serviceExists = await this.serviceRepository.getByName(result.data.name);
+        const serviceExists = await this.serviceRepository.getByName(result.data.name, service.company_id);
         if (serviceExists) {
             throw new Error(ErrorMessages.SERVICE_ALREADY_EXISTS);
         }

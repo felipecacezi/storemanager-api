@@ -26,7 +26,7 @@ export class CreateVendorUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const vendorExists = await this.vendorRepository.getByEmail(result.data.email);
+        const vendorExists = await this.vendorRepository.getByEmail(result.data.email, vendor.company_id);
         if (vendorExists) {
             throw new Error(ErrorMessages.VENDOR_ALREADY_EXISTS);
         }

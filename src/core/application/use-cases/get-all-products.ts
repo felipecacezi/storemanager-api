@@ -7,7 +7,7 @@ export class GetAllProductsUseCase {
         private productRepository: KnexProductRepository
     ) { }
 
-    async execute(params: { page: number, limit: number }) {
+    async execute(params: { page: number, limit: number, company_id: number }) {
         const schema = z.object({
             page: z.number({
                 required_error: ErrorMessages.PRODUCT_PAGE_REQUIRED,
@@ -29,7 +29,7 @@ export class GetAllProductsUseCase {
         }
 
         const { page, limit } = result.data;
-        const products = await this.productRepository.getAll(page, limit);
+        const products = await this.productRepository.getAll(page, limit, params.company_id);
         return products;
     }
 }

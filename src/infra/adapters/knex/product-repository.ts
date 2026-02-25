@@ -10,6 +10,7 @@ export class KnexProductRepository implements ProductRepository {
     async create(product: Product): Promise<Product | null> {
         return await this.db("products").insert({
             id: product.id,
+            company_id: product.company_id,
             name: product.name,
             description: product.description,
             cost_price: product.cost_price,
@@ -20,26 +21,27 @@ export class KnexProductRepository implements ProductRepository {
     }
 
     async update(product: ProductUpdate): Promise<ProductUpdate | null> {
-        return await this.db("products").where({ id: product.id }).update(product);
+        const { company_id, ...updateData } = product;
+        return await this.db("products").where({ id: product.id, company_id }).update(updateData);
     }
 
-    async delete(id: number): Promise<boolean> {
-        return await this.db("products").where({ id }).update({ status: false });
+    async delete(id: number, companyId: number): Promise<boolean> {
+        return await this.db("products").where({ id, company_id: companyId }).update({ status: false });
     }
 
-    async getById(id: number): Promise<Product | null> {
-        return await this.db("products").where({ id }).first();
+    async getById(id: number, companyId: number): Promise<Product | null> {
+        return await this.db("products").where({ id, company_id: companyId }).first();
     }
 
-    async getAll(page: number, limit: number, search?: string): Promise<Product[]> {
-        return await this.db("products").where({ status: true }).limit(limit).offset((page - 1) * limit);
+    async getAll(page: number, limit: number, companyId: number, search?: string): Promise<Product[]> {
+        return await this.db("products").where({ status: true, company_id: companyId }).limit(limit).offset((page - 1) * limit);
     }
 
-    async count(search?: string): Promise<number> {
-        return await this.db("products").where({ status: true }).count();
+    async count(companyId: number, search?: string): Promise<number> {
+        return await this.db("products").where({ status: true, company_id: companyId }).count();
     }
 
-    async getByName(name: string): Promise<Product | null> {
-        return await this.db("products").where({ name }).first();
+    async getByName(name: string, companyId: number): Promise<Product | null> {
+        return await this.db("products").where({ name, company_id: companyId }).first();
     }
 }

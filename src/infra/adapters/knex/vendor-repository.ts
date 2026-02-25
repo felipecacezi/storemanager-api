@@ -10,6 +10,7 @@ export class KnexVendorRepository implements VendorRepository {
     async create(vendor: Vendor): Promise<Vendor | null> {
         return await this.db("vendors").insert({
             id: vendor.id,
+            company_id: vendor.company_id,
             name: vendor.name,
             email: vendor.email,
             document: vendor.document,
@@ -28,26 +29,27 @@ export class KnexVendorRepository implements VendorRepository {
     }
 
     async update(vendor: VendorUpdate): Promise<VendorUpdate | null> {
-        return await this.db("vendors").where({ id: vendor.id }).update(vendor);
+        const { company_id, ...updateData } = vendor;
+        return await this.db("vendors").where({ id: vendor.id, company_id }).update(updateData);
     }
 
-    async delete(id: number): Promise<boolean> {
-        return await this.db("vendors").where({ id }).update({ status: false });
+    async delete(id: number, companyId: number): Promise<boolean> {
+        return await this.db("vendors").where({ id, company_id: companyId }).update({ status: false });
     }
 
-    async getById(id: number): Promise<Vendor | null> {
-        return await this.db("vendors").where({ id }).first();
+    async getById(id: number, companyId: number): Promise<Vendor | null> {
+        return await this.db("vendors").where({ id, company_id: companyId }).first();
     }
 
-    async getAll(page: number, limit: number, search?: string): Promise<Vendor[]> {
-        return await this.db("vendors").where({ status: true }).limit(limit).offset((page - 1) * limit);
+    async getAll(page: number, limit: number, companyId: number, search?: string): Promise<Vendor[]> {
+        return await this.db("vendors").where({ status: true, company_id: companyId }).limit(limit).offset((page - 1) * limit);
     }
 
-    async count(search?: string): Promise<number> {
-        return await this.db("vendors").where({ status: true }).count();
+    async count(companyId: number, search?: string): Promise<number> {
+        return await this.db("vendors").where({ status: true, company_id: companyId }).count();
     }
 
-    async getByEmail(email: string): Promise<Vendor | null> {
-        return await this.db("vendors").where({ email }).first();
+    async getByEmail(email: string, companyId: number): Promise<Vendor | null> {
+        return await this.db("vendors").where({ email, company_id: companyId }).first();
     }
 }

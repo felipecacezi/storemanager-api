@@ -21,11 +21,11 @@ export class DeleteVendorUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const vendorExists = await this.vendorRepository.getById(result.data.id);
+        const vendorExists = await this.vendorRepository.getById(result.data.id, vendor.company_id);
         if (!vendorExists) {
             throw new Error(ErrorMessages.VENDOR_NOT_FOUND);
         }
 
-        return await this.vendorRepository.update({ id: result.data.id, status: false });
+        return await this.vendorRepository.update({ id: result.data.id, company_id: vendor.company_id, status: false });
     }
 }

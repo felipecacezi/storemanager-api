@@ -1,5 +1,6 @@
 export interface Product {
     id?: number;
+    company_id: number;
     name: string;
     description?: string;
     cost_price: number;
@@ -12,6 +13,7 @@ export interface Product {
 
 export interface ProductUpdate {
     id: number;
+    company_id: number;
     name?: string;
     description?: string;
     cost_price?: number;

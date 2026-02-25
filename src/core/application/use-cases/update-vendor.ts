@@ -21,7 +21,7 @@ export class UpdateVendorUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const vendorExists = await this.vendorRepository.getById(result.data.id);
+        const vendorExists = await this.vendorRepository.getById(result.data.id, vendor.company_id);
         if (!vendorExists) {
             throw new Error(ErrorMessages.VENDOR_NOT_FOUND);
         }

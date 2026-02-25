@@ -26,7 +26,6 @@ export class AuthenticateUserUseCase {
         const token = await this.createJwtTokenRepository.generateToken({ email: objUserFound.email, id: objUserFound.id });
         const objUserWithJwt = { ...objUserFound, token }
         await this.updateUserUseCase.execute(objUserWithJwt);
-
         return objUserWithJwt;
     }
 }

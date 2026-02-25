@@ -1,5 +1,6 @@
 export interface Service {
     id?: number;
+    company_id: number;
     name: string;
     description?: string;
     service_price: number;
@@ -10,6 +11,7 @@ export interface Service {
 
 export interface ServiceUpdate {
     id: number;
+    company_id: number;
     name?: string;
     description?: string;
     service_price?: number;
