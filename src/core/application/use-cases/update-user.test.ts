@@ -56,7 +56,7 @@ describe('Update user cases tests', () => {
         };
 
         userRepositoryMock.getUserById.resolves(null);
-        userRepositoryMock.update.resolves(null);
+        // userRepositoryMock.update.resolves(null);
 
         try {
             await useCase.execute(fakeUser as any);
@@ -99,7 +99,7 @@ describe('Update user cases tests', () => {
         try {
             await useCase.execute(fakeUser as any);
         } catch (error: any) {
-            expect(error.message).to.equal("A confirmação de senha é obrigatória (cod.: 400083)");
+            expect(error.message).to.equal("A confirmação de senha é obrigatória (cod.: 400101)");
         }
 
         expect(userRepositoryMock.update.called).to.be.false;
@@ -118,7 +118,7 @@ describe('Update user cases tests', () => {
         try {
             await useCase.execute(fakeUser as any);
         } catch (error: any) {
-            expect(error.message).to.equal("Senha e confirmação de senha não coincidem (cod.: 400084)");
+            expect(error.message).to.equal("Senha e confirmação de senha não coincidem (cod.: 400102)");
         }
 
         expect(userRepositoryMock.update.called).to.be.false;

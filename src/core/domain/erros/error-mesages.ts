@@ -100,4 +100,7 @@ export const ErrorMessages = {
     [ErroCodes.COMPANY_LIMIT_INVALID]: "O limite deve ser um número (cod.: 400097)",
     [ErroCodes.COMPANY_ID_NOT_PROVIDED]: "O id da empresa (company_id) é obrigatório e deve ser informado no header x-company-id (cod.: 400098)",
     [ErroCodes.COMPANY_ID_INVALID]: "O id da empresa (company_id) informado é inválido (cod.: 400099)",
+    [ErroCodes.PASSWORD_REQUIRED]: "A senha é obrigatória (cod.: 400100)",
+    [ErroCodes.CONFIRM_PASSWORD_REQUIRED]: "A confirmação de senha é obrigatória (cod.: 400101)",
+    [ErroCodes.PASSWORDS_DO_NOT_MATCH]: "Senha e confirmação de senha não coincidem (cod.: 400102)",
 }

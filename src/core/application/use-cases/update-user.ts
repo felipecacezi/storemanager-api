@@ -28,6 +28,32 @@ export class UpdateUserUseCase {
             throw new Error(ErrorMessages.USER_NOT_FOUND);
         }
 
+        if (user?.password) {
+            const schema = z.object({
+                id: z.number({
+                    message: ErrorMessages.USER_ID_REQUIRED,
+                    invalid_type_error: ErrorMessages.USER_ID_REQUIRED
+                }),
+                password: z.string({
+                    message: ErrorMessages.PASSWORD_REQUIRED,
+                    invalid_type_error: ErrorMessages.PASSWORD_REQUIRED
+                }),
+                confirm_password: z.string({
+                    message: ErrorMessages.CONFIRM_PASSWORD_REQUIRED,
+                    invalid_type_error: ErrorMessages.CONFIRM_PASSWORD_REQUIRED
+                })
+            });
+
+            let result = schema.safeParse(user);
+            if (!result.success) {
+                throw new Error(result.error.issues[0].message);
+            }
+
+            if (result.data.password !== result.data.confirm_password) {
+                throw new Error(ErrorMessages.PASSWORDS_DO_NOT_MATCH);
+            }
+        }
+
         const userUpdate: UserUpdate = {
             id: user.id,
             email: user.email,
