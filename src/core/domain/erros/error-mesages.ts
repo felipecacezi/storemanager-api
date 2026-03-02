@@ -103,4 +103,5 @@ export const ErrorMessages = {
     [ErroCodes.PASSWORD_REQUIRED]: "A senha é obrigatória (cod.: 400100)",
     [ErroCodes.CONFIRM_PASSWORD_REQUIRED]: "A confirmação de senha é obrigatória (cod.: 400101)",
     [ErroCodes.PASSWORDS_DO_NOT_MATCH]: "Senha e confirmação de senha não coincidem (cod.: 400102)",
+    [ErroCodes.USER_TOKEN_REQUIRED]: "O token do usuário é obrigatório (cod.: 400103)",
 }

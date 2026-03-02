@@ -9,7 +9,7 @@ describe('Authenticate user cases tests', () => {
     let authenticateUserUseCase: AuthenticateUserUseCase;
     let userRepositoryMock: any;
     let passwordHasherRepositoryMock: any;
-    let updateUserUseCaseMock: any;
+    let updateUserTokenUseCaseMock: any;
     let createJwtTokenRepositoryMock: any;
 
     beforeEach(() => {
@@ -22,7 +22,7 @@ describe('Authenticate user cases tests', () => {
             compare: sinon.stub()
         };
 
-        updateUserUseCaseMock = {
+        updateUserTokenUseCaseMock = {
             execute: sinon.stub()
         };
 
@@ -33,7 +33,7 @@ describe('Authenticate user cases tests', () => {
         authenticateUserUseCase = new AuthenticateUserUseCase(
             userRepositoryMock,
             passwordHasherRepositoryMock,
-            updateUserUseCaseMock,
+            updateUserTokenUseCaseMock,
             createJwtTokenRepositoryMock
         );
     });
@@ -52,15 +52,15 @@ describe('Authenticate user cases tests', () => {
 
         userRepositoryMock.getUserByEmail.resolves(fakeUser);
         passwordHasherRepositoryMock.compare.resolves(true);
-        updateUserUseCaseMock.execute.resolves(fakeUser);
+        updateUserTokenUseCaseMock.execute.resolves(fakeUser);
         createJwtTokenRepositoryMock.generateToken.resolves('fake-token');
 
         const result = await authenticateUserUseCase.execute(fakeUser.email, fakeUser.password);
 
-        expect(result).to.deep.equal({ ...fakeUser, token: 'fake-token' });
+        expect(result).to.deep.equal({ id: fakeUser.id, token: 'fake-token' });
         expect(userRepositoryMock.getUserByEmail.calledWith(fakeUser.email)).to.be.true;
         expect(passwordHasherRepositoryMock.compare.calledWith(fakeUser.password, fakeUser.password)).to.be.true;
-        expect(updateUserUseCaseMock.execute.calledWith({ ...fakeUser, token: 'fake-token' })).to.be.true;
+        expect(updateUserTokenUseCaseMock.execute.calledWith({ id: fakeUser.id, token: 'fake-token' })).to.be.true;
         expect(createJwtTokenRepositoryMock.generateToken.calledWith({ email: fakeUser.email, id: fakeUser.id })).to.be.true;
     });
 
@@ -82,7 +82,7 @@ describe('Authenticate user cases tests', () => {
 
         expect(userRepositoryMock.getUserByEmail.calledWith(fakeUser.email)).to.be.true;
         expect(passwordHasherRepositoryMock.compare.called).to.be.false;
-        expect(updateUserUseCaseMock.execute.called).to.be.false;
+        expect(updateUserTokenUseCaseMock.execute.called).to.be.false;
         expect(createJwtTokenRepositoryMock.generateToken.called).to.be.false;
     });
 
@@ -105,7 +105,7 @@ describe('Authenticate user cases tests', () => {
 
         expect(userRepositoryMock.getUserByEmail.calledWith(fakeUser.email)).to.be.true;
         expect(passwordHasherRepositoryMock.compare.calledWith(fakeUser.password, fakeUser.password)).to.be.true;
-        expect(updateUserUseCaseMock.execute.called).to.be.false;
+        expect(updateUserTokenUseCaseMock.execute.called).to.be.false;
         expect(createJwtTokenRepositoryMock.generateToken.called).to.be.false;
     });
 });
