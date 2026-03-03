@@ -86,6 +86,7 @@ export const ErrorMessages = {
     [ErroCodes.USER_CONFIRM_PASSWORD_REQUIRED]: "A confirmação de senha é obrigatória (cod.: 400083)",
     [ErroCodes.USER_PASSWORDS_DO_NOT_MATCH]: "Senha e confirmação de senha não coincidem (cod.: 400084)",
     [ErroCodes.COMPANY_DOCUMENT_REQUIRED]: "O documento da empresa é obrigatório (cod.: 400085)",
+    [ErroCodes.COMPANY_NAME_REQUIRED]: "O nome da empresa é obrigatório (cod.: 400106)",
     [ErroCodes.COMPANY_EMAIL_REQUIRED]: "O e-mail da empresa é obrigatório (cod.: 400086)",
     [ErroCodes.COMPANY_EMAIL_INVALID]: "O e-mail da empresa é inválido (cod.: 400087)",
     [ErroCodes.COMPANY_PHONE_REQUIRED]: "O telefone da empresa é obrigatório (cod.: 400088)",
@@ -104,4 +105,5 @@ export const ErrorMessages = {
     [ErroCodes.CONFIRM_PASSWORD_REQUIRED]: "A confirmação de senha é obrigatória (cod.: 400101)",
     [ErroCodes.PASSWORDS_DO_NOT_MATCH]: "Senha e confirmação de senha não coincidem (cod.: 400102)",
     [ErroCodes.USER_TOKEN_REQUIRED]: "O token do usuário é obrigatório (cod.: 400103)",
+    [ErroCodes.USER_COMPANY_ALREADY_SET]: "O usuário já possui uma empresa vinculada (cod.: 400107)",
 }

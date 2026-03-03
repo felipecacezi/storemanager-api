@@ -9,6 +9,7 @@ describe('Create company cases tests', () => {
     let useCase: CreateCompanyUseCase;
 
     const fakeCompany = () => ({
+        name: faker.company.name(),
         document: faker.string.numeric(14),
         email: faker.internet.email(),
         phone: faker.phone.number(),
@@ -97,6 +98,18 @@ describe('Create company cases tests', () => {
             await useCase.execute(company);
         } catch (error: any) {
             expect(error.message).to.equal("O telefone da empresa é obrigatório (cod.: 400088)");
+        }
+
+        expect(companyRepositoryMock.create.called).to.be.false;
+    });
+
+    it('company name is required', async () => {
+        const company = { ...fakeCompany(), name: '' };
+
+        try {
+            await useCase.execute(company);
+        } catch (error: any) {
+            expect(error.message).to.equal("O nome da empresa é obrigatório (cod.: 400106)");
         }
 
         expect(companyRepositoryMock.create.called).to.be.false;

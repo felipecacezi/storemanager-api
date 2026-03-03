@@ -1,7 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { CompanyController } from "../controllers/company.controller.js";
 import { KnexCompanyRepository } from "../../adapters/knex/company-repository.js";
+import { KnexUserRepository } from "../../adapters/knex/user-repository.js";
 import { CreateCompanyUseCase } from "../../../core/application/use-cases/create-company.js";
+import { CreateCompanyForUserUseCase } from "../../../core/application/use-cases/create-company-for-user.js";
+import { GetCompanyForUserUseCase } from "../../../core/application/use-cases/get-company-for-user.js";
 import { UpdateCompanyUseCase } from "../../../core/application/use-cases/update-company.js";
 import { DeleteCompanyUseCase } from "../../../core/application/use-cases/delete-company.js";
 import { GetAllCompaniesUseCase } from "../../../core/application/use-cases/get-all-companies.js";
@@ -10,35 +13,47 @@ import { companyMiddleware } from "../middleware/company-middleware.js";
 
 export async function configurationsRoute(app: FastifyInstance) {
     const companyRepository = new KnexCompanyRepository(app.knex);
+    const userRepository = new KnexUserRepository(app.knex);
 
     const createCompanyUseCase = new CreateCompanyUseCase(companyRepository);
+    const createCompanyForUserUseCase = new CreateCompanyForUserUseCase(
+        userRepository,
+        companyRepository,
+        createCompanyUseCase
+    );
+    const getCompanyForUserUseCase = new GetCompanyForUserUseCase(
+        userRepository,
+        companyRepository
+    );
+
     const updateCompanyUseCase = new UpdateCompanyUseCase(companyRepository);
     const deleteCompanyUseCase = new DeleteCompanyUseCase(companyRepository);
     const getAllCompaniesUseCase = new GetAllCompaniesUseCase(companyRepository);
 
     const companyController = new CompanyController(
-        createCompanyUseCase,
+        createCompanyForUserUseCase,
+        getCompanyForUserUseCase,
         updateCompanyUseCase,
         deleteCompanyUseCase,
         getAllCompaniesUseCase
     );
 
     app.addHook('onRequest', authMiddleware);
-    app.addHook('onRequest', companyMiddleware);
 
     app.post('/companies', async (request, reply) => {
         return await companyController.create(request, reply);
     });
 
-    app.put('/companies/:id', async (request, reply) => {
+    app.get('/companies/me', async (request, reply) => {
+        return await companyController.me(request, reply);
+    });
+    app.put('/companies/:id', { preHandler: [companyMiddleware] }, async (request, reply) => {
         return await companyController.update(request, reply);
     });
-
-    app.delete('/companies/:id', async (request, reply) => {
+    app.delete('/companies/:id', { preHandler: [companyMiddleware] }, async (request, reply) => {
         return await companyController.delete(request, reply);
     });
-
-    app.get('/companies', async (request, reply) => {
+    app.get('/companies', { preHandler: [companyMiddleware] }, async (request, reply) => {
         return await companyController.getAll(request, reply);
     });
 }

@@ -13,6 +13,8 @@ import { CryptoPasswordGenerator } from "../../utils/crypto-password-generator.a
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { companyMiddleware } from "../middleware/company-middleware.js";
 import { refreshToken } from "../middleware/renew-jwt-middleware.js";
+import { GetUserCompanyStatusUseCase } from "../../../core/application/use-cases/get-user-company-status.js";
+import { KnexCompanyRepository } from "../../adapters/knex/company-repository.js";
 
 export async function userRoute(app: FastifyInstance) {
     const passwordHasherRepository = new PasswordHasherRepository();
@@ -28,6 +30,7 @@ export async function userRoute(app: FastifyInstance) {
         passwordHasherRepository
     );
     const createJwtTokenRepository = new CreateJwtTokenRepository(app);
+    const companyRepository = new KnexCompanyRepository(app.knex);
     const authenticateUserUseCase = new AuthenticateUserUseCase(
         userRepository,
         passwordHasherRepository,
@@ -44,11 +47,17 @@ export async function userRoute(app: FastifyInstance) {
         cryptoPasswordGenerator,
         updateUserUseCase
     );
+    const getUserCompanyStatusUseCase = new GetUserCompanyStatusUseCase(
+        userRepository,
+        companyRepository
+    );
+
     const userController = new UserController(
         createUserUseCase,
         authenticateUserUseCase,
         forgotPasswordUseCase,
-        updateUserUseCase
+        updateUserUseCase,
+        getUserCompanyStatusUseCase
     );
 
     app.post('/user', async (request, reply) => {
@@ -70,6 +79,11 @@ export async function userRoute(app: FastifyInstance) {
         }]
     }, async (request, reply) => {
         return await userController.update(request, reply);
+    });
+    app.get('/user/company-status', {
+        onRequest: [authMiddleware],
+    }, async (request, reply) => {
+        return await userController.companyStatus(request, reply);
     });
 
 }

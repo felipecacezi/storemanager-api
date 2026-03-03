@@ -10,9 +10,11 @@ export class KnexCompanyRepository implements CompanyRepository {
     async create(company: Company): Promise<Company | null> {
         return await this.db("companies").insert({
             id: company.id,
+            name: company.name,
             document: company.document,
             email: company.email,
             phone: company.phone,
+            is_whatsapp: company.is_whatsapp,
             country: company.country,
             address: company.address,
             number: company.number,

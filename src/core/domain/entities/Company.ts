@@ -1,8 +1,10 @@
 export interface Company {
     id?: number;
+    name: string;
     document: string;
     email: string;
     phone: string;
+    is_whatsapp?: boolean;
     country?: string;
     address?: string;
     number?: string;
@@ -18,9 +20,11 @@ export interface Company {
 
 export interface CompanyUpdate {
     id: number;
+    name?: string;
     document?: string;
     email?: string;
     phone?: string;
+    is_whatsapp?: boolean;
     country?: string;
     address?: string;
     number?: string;

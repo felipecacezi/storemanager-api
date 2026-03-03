@@ -3,6 +3,7 @@ import type { CreateUserUseCase } from "../../../core/application/use-cases/crea
 import type { AuthenticateUserUseCase } from "../../../core/application/use-cases/authenticate-user.js";
 import type { ForgotPasswordUseCase } from "../../../core/application/use-cases/forgot-password.js";
 import type { UpdateUserUseCase } from "../../../core/application/use-cases/update-user.js";
+import { GetUserCompanyStatusUseCase } from "../../../core/application/use-cases/get-user-company-status.js";
 import jwt from "jsonwebtoken";
 
 export class UserController {
@@ -10,7 +11,8 @@ export class UserController {
         private createUserUseCase: CreateUserUseCase,
         private authenticateUserUseCase: AuthenticateUserUseCase,
         private forgotPasswordUseCase: ForgotPasswordUseCase,
-        private updateUserUseCase: UpdateUserUseCase
+        private updateUserUseCase: UpdateUserUseCase,
+        private getUserCompanyStatusUseCase: GetUserCompanyStatusUseCase
     ) { }
 
     async create(request: FastifyRequest, reply: FastifyReply) {
@@ -47,5 +49,15 @@ export class UserController {
         });
 
         return reply.status(200).send({ success: true, message: "Usuário atualizado com sucesso!" });
+    }
+
+    async companyStatus(request: FastifyRequest, reply: FastifyReply) {
+        const token = request.headers.authorization?.replace('Bearer ', '');
+        const decoded: any = token ? jwt.decode(token) : null;
+        const userId = Number(decoded?.id);
+
+        const status = await this.getUserCompanyStatusUseCase.execute({ userId });
+
+        return reply.status(200).send({ success: true, data: status });
     }
 }

@@ -10,6 +10,8 @@ export class CreateCompanyUseCase {
 
     async execute(company: Company) {
         const schema = z.object({
+            name: z.string({ message: ErrorMessages.COMPANY_NAME_REQUIRED })
+                .min(1, ErrorMessages.COMPANY_NAME_REQUIRED),
             document: z.string({ message: ErrorMessages.COMPANY_DOCUMENT_REQUIRED })
                 .min(1, ErrorMessages.COMPANY_DOCUMENT_REQUIRED),
             email: z.string({ message: ErrorMessages.COMPANY_EMAIL_REQUIRED })
