@@ -1,16 +1,13 @@
 import type { KnexClientRepository } from "../../../infra/adapters/knex/client-repository.js";
-import type { ClientUpdate } from "../../domain/entities/Client.js";
 import { ErrorMessages } from "../../domain/erros/error-mesages.js";
 import { z } from "zod";
 
-export class UpdateClientUseCase {
+export class GetClientByIdUseCase {
     constructor(
         private clientRepository: KnexClientRepository
     ) { }
 
-    async execute(client: ClientUpdate) {
-
-        console.log('client1', client);
+    async execute(params: { id: number, company_id: number }) {
         const schema = z.object({
             id: z.number({
                 message: ErrorMessages.CLIENT_ID_REQUIRED,
@@ -18,18 +15,16 @@ export class UpdateClientUseCase {
             })
         });
 
-        const result = schema.safeParse(client);
+        const result = schema.safeParse(params);
         if (!result.success) {
             throw new Error(result.error.issues[0].message);
         }
-        console.log('client2', client);
 
-        const clientExists = await this.clientRepository.getById(result.data.id, client.company_id);
-        if (!clientExists) {
+        const client = await this.clientRepository.getById(result.data.id, params.company_id);
+        if (!client) {
             throw new Error(ErrorMessages.CLIENT_NOT_FOUND);
         }
-        console.log('client3', client);
 
-        return await this.clientRepository.update(client);
+        return client;
     }
 }
