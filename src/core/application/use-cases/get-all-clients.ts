@@ -7,7 +7,7 @@ export class GetAllClientsUseCase {
         private clientRepository: KnexClientRepository
     ) { }
 
-    async execute(params: { page: number, limit: number, company_id: number }) {
+    async execute(params: { page: number, limit: number, company_id: number, search?: string }) {
         const schema = z.object({
             page: z.number({
                 required_error: ErrorMessages.CLIENT_PAGE_REQUIRED,
@@ -21,6 +21,7 @@ export class GetAllClientsUseCase {
             })
                 .min(1, ErrorMessages.CLIENT_LIMIT_REQUIRED)
                 .max(100, ErrorMessages.CLIENT_LIMIT_MAX),
+            search: z.string().optional(),
         });
 
         const result = schema.safeParse(params);
@@ -28,8 +29,8 @@ export class GetAllClientsUseCase {
             throw new Error(result.error.issues[0].message);
         }
 
-        const { page, limit } = result.data;
-        const clients = await this.clientRepository.getAll(page, limit, params.company_id);
+        const { page, limit, search } = result.data;
+        const clients = await this.clientRepository.getAll(page, limit, params.company_id, search);
 
         return clients;
     }
