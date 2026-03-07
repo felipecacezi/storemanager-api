@@ -22,8 +22,14 @@ export class UpdateClientUseCase {
         if (!result.success) {
             throw new Error(result.error.issues[0].message);
         }
+<<<<<<< Updated upstream
         console.log('client2', client);
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 
+=======
+>>>>>>> Stashed changes
         const clientExists = await this.clientRepository.getById(result.data.id, client.company_id);
         if (!clientExists) {
             throw new Error(ErrorMessages.CLIENT_NOT_FOUND);
