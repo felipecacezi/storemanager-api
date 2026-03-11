@@ -9,8 +9,6 @@ export class UpdateClientUseCase {
     ) { }
 
     async execute(client: ClientUpdate) {
-
-        console.log('client1', client);
         const schema = z.object({
             id: z.number({
                 message: ErrorMessages.CLIENT_ID_REQUIRED,
@@ -22,19 +20,11 @@ export class UpdateClientUseCase {
         if (!result.success) {
             throw new Error(result.error.issues[0].message);
         }
-<<<<<<< Updated upstream
-        console.log('client2', client);
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
 
-=======
->>>>>>> Stashed changes
         const clientExists = await this.clientRepository.getById(result.data.id, client.company_id);
         if (!clientExists) {
             throw new Error(ErrorMessages.CLIENT_NOT_FOUND);
         }
-        console.log('client3', client);
 
         return await this.clientRepository.update(client);
     }

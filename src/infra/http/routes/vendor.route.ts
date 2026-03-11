@@ -5,6 +5,7 @@ import { CreateVendorUseCase } from "../../../core/application/use-cases/create-
 import { UpdateVendorUseCase } from "../../../core/application/use-cases/update-vendor.js";
 import { DeleteVendorUseCase } from "../../../core/application/use-cases/delete-vendor.js";
 import { GetAllVendorsUseCase } from "../../../core/application/use-cases/get-all-vendors.js";
+import { GetVendorByIdUseCase } from "../../../core/application/use-cases/get-vendor-by-id.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { companyMiddleware } from "../middleware/company-middleware.js";
 
@@ -15,12 +16,14 @@ export async function vendorRoute(app: FastifyInstance) {
     const updateVendorUseCase = new UpdateVendorUseCase(vendorRepository);
     const deleteVendorUseCase = new DeleteVendorUseCase(vendorRepository);
     const getAllVendorsUseCase = new GetAllVendorsUseCase(vendorRepository);
+    const getVendorByIdUseCase = new GetVendorByIdUseCase(vendorRepository);
 
     const vendorController = new VendorController(
         createVendorUseCase,
         updateVendorUseCase,
         deleteVendorUseCase,
-        getAllVendorsUseCase
+        getAllVendorsUseCase,
+        getVendorByIdUseCase
     );
 
     app.addHook('onRequest', authMiddleware);
@@ -40,5 +43,9 @@ export async function vendorRoute(app: FastifyInstance) {
 
     app.get('/vendors', async (request, reply) => {
         return await vendorController.getAll(request, reply);
+    });
+
+    app.get('/vendors/:id', async (request, reply) => {
+        return await vendorController.getById(request, reply);
     });
 }

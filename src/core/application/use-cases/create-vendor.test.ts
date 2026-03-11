@@ -9,6 +9,7 @@ describe('Create vendor cases tests', () => {
     let useCase: CreateVendorUseCase;
 
     const fakeVendor = () => ({
+        company_id: 1,
         name: faker.person.fullName(),
         email: faker.internet.email(),
         document: faker.string.numeric(11),
@@ -113,5 +114,32 @@ describe('Create vendor cases tests', () => {
         }
 
         expect(vendorRepositoryMock.create.called).to.be.false;
+    });
+
+    it('should create vendor with all address fields', async () => {
+        const vendor = {
+            ...fakeVendor(),
+            company_id: 1,
+            zipcode: "12345-678",
+            address: "Rua Teste",
+            number: "100",
+            neighborhood: "Bairro Teste",
+            city: "Cidade Teste",
+            state: "TS",
+            complement: "Apto 1",
+            is_whatsapp: true,
+        };
+
+        vendorRepositoryMock.getByEmail.resolves(null);
+        vendorRepositoryMock.create.resolves({ id: 1, ...vendor });
+
+        const result = await useCase.execute(vendor);
+
+        expect(result).to.have.property('id', 1);
+        expect(vendorRepositoryMock.create.calledOnce).to.be.true;
+        const callArgs = vendorRepositoryMock.create.getCall(0).args[0];
+        expect(callArgs.zipcode).to.equal("12345-678");
+        expect(callArgs.address).to.equal("Rua Teste");
+        expect(callArgs.is_whatsapp).to.be.true;
     });
 });

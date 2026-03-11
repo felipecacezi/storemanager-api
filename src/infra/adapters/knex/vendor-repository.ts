@@ -42,11 +42,41 @@ export class KnexVendorRepository implements VendorRepository {
     }
 
     async getAll(page: number, limit: number, companyId: number, search?: string): Promise<Vendor[]> {
-        return await this.db("vendors").where({ status: true, company_id: companyId }).limit(limit).offset((page - 1) * limit);
+        const query = this.db("vendors").where({ company_id: companyId });
+
+        const trimmedSearch = search?.trim();
+        if (trimmedSearch) {
+            const likeTerm = `%${trimmedSearch}%`;
+            query.andWhere((qb) => {
+                qb.where("name", "like", likeTerm)
+                    .orWhere("email", "like", likeTerm)
+                    .orWhere("document", "like", likeTerm)
+                    .orWhere("phone", "like", likeTerm);
+            });
+        }
+
+        return await query
+            .orderBy("id", "desc")
+            .limit(limit)
+            .offset((page - 1) * limit);
     }
 
     async count(companyId: number, search?: string): Promise<number> {
-        return await this.db("vendors").where({ status: true, company_id: companyId }).count();
+        const query = this.db("vendors").where({ company_id: companyId });
+
+        const trimmedSearch = search?.trim();
+        if (trimmedSearch) {
+            const likeTerm = `%${trimmedSearch}%`;
+            query.andWhere((qb) => {
+                qb.where("name", "like", likeTerm)
+                    .orWhere("email", "like", likeTerm)
+                    .orWhere("document", "like", likeTerm)
+                    .orWhere("phone", "like", likeTerm);
+            });
+        }
+
+        const result: any = await query.count({ count: "*" }).first();
+        return Number(result?.count ?? 0);
     }
 
     async getByEmail(email: string, companyId: number): Promise<Vendor | null> {

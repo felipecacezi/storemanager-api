@@ -22,9 +22,9 @@ describe('Delete vendor cases tests', () => {
 
     it('should delete a vendor', async () => {
         const vendorId = faker.number.int();
-        const vendor = { id: vendorId };
+        const vendor = { id: vendorId, company_id: 1 };
 
-        knexVendorRepository.getById.resolves({ id: vendorId });
+        knexVendorRepository.getById.resolves({ id: vendorId, company_id: 1 });
         knexVendorRepository.update.resolves({ id: vendorId, status: false });
 
         const result = await deleteVendorUseCase.execute(vendor);
@@ -33,13 +33,13 @@ describe('Delete vendor cases tests', () => {
 
     it('should throw an error if vendor is not found', async () => {
         const vendorId = faker.number.int();
-        const vendor = { id: vendorId };
+        const vendor = { id: vendorId, company_id: 1 };
 
         knexVendorRepository.getById.resolves(null);
-        knexVendorRepository.update.resolves({ id: vendorId, status: false });
 
         try {
             await deleteVendorUseCase.execute(vendor);
+            expect.fail("Should have thrown an error");
         } catch (error: any) {
             expect(error.message).to.equal("Fornecedor não encontrado (cod.: 400037)");
         }
@@ -48,15 +48,29 @@ describe('Delete vendor cases tests', () => {
     });
 
     it('should throw an error if vendor id is not provided', async () => {
-        const vendor = { id: null };
-
-        knexVendorRepository.getById.resolves(null);
-        knexVendorRepository.update.resolves({ id: null, status: false });
+        const vendor = { id: null, company_id: 1 };
 
         try {
             await deleteVendorUseCase.execute(vendor as any);
+            expect.fail("Should have thrown an error");
         } catch (error: any) {
             expect(error.message).to.equal("O id do fornecedor é obrigatório (cod.: 400038)");
+        }
+
+        expect(knexVendorRepository.update.called).to.be.false;
+    });
+
+    it('should throw an error if vendor does not belong to the company', async () => {
+        const vendorId = faker.number.int();
+        const vendor = { id: vendorId, company_id: 2 };
+
+        knexVendorRepository.getById.withArgs(vendorId, 2).resolves(null);
+
+        try {
+            await deleteVendorUseCase.execute(vendor);
+            expect.fail("Should have thrown an error");
+        } catch (error: any) {
+            expect(error.message).to.equal("Fornecedor não encontrado (cod.: 400037)");
         }
 
         expect(knexVendorRepository.update.called).to.be.false;
