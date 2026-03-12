@@ -5,7 +5,7 @@ export interface ProductRepository {
     update(product: ProductUpdate): Promise<ProductUpdate | null>;
     delete(id: number, companyId: number): Promise<boolean>;
     getById(id: number, companyId: number): Promise<Product | null>;
-    getAll(page: number, limit: number, companyId: number, search?: string): Promise<Product[]>;
-    count(companyId: number, search?: string): Promise<number>;
+    getAll(page: number, limit: number, companyId: number, search?: string, status?: boolean | undefined): Promise<Product[]>;
+    count(companyId: number, search?: string, status?: boolean | undefined): Promise<number>;
     getByName(name: string, companyId: number): Promise<Product | null>;
 }

@@ -33,12 +33,25 @@ export class KnexProductRepository implements ProductRepository {
         return await this.db("products").where({ id, company_id: companyId }).first();
     }
 
-    async getAll(page: number, limit: number, companyId: number, search?: string): Promise<Product[]> {
-        return await this.db("products").where({ status: true, company_id: companyId }).limit(limit).offset((page - 1) * limit);
+    async getAll(page: number, limit: number, companyId: number, search?: string, status?: boolean | undefined): Promise<Product[]> {
+        const query = this.db("products").where({ company_id: companyId });
+
+        if (status !== undefined) {
+            query.where({ status });
+        }
+
+        return await query.limit(limit).offset((page - 1) * limit);
     }
 
-    async count(companyId: number, search?: string): Promise<number> {
-        return await this.db("products").where({ status: true, company_id: companyId }).count();
+    async count(companyId: number, search?: string, status?: boolean | undefined): Promise<number> {
+        const query = this.db("products").where({ company_id: companyId });
+
+        if (status !== undefined) {
+            query.where({ status });
+        }
+
+        const result = await query.count({ count: '*' }).first();
+        return Number(result?.count || 0);
     }
 
     async getByName(name: string, companyId: number): Promise<Product | null> {

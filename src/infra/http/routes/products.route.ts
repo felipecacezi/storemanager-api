@@ -5,6 +5,7 @@ import { CreateProductUseCase } from "../../../core/application/use-cases/create
 import { UpdateProductUseCase } from "../../../core/application/use-cases/update-product.js";
 import { DeleteProductUseCase } from "../../../core/application/use-cases/delete-product.js";
 import { GetAllProductsUseCase } from "../../../core/application/use-cases/get-all-products.js";
+import { GetProductByIdUseCase } from "../../../core/application/use-cases/get-product-by-id.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { companyMiddleware } from "../middleware/company-middleware.js";
 
@@ -15,12 +16,14 @@ export async function productRoute(app: FastifyInstance) {
     const updateProductUseCase = new UpdateProductUseCase(productRepository);
     const deleteProductUseCase = new DeleteProductUseCase(productRepository);
     const getAllProductsUseCase = new GetAllProductsUseCase(productRepository);
+    const getProductByIdUseCase = new GetProductByIdUseCase(productRepository);
 
     const productController = new ProductController(
         createProductUseCase,
         updateProductUseCase,
         deleteProductUseCase,
-        getAllProductsUseCase
+        getAllProductsUseCase,
+        getProductByIdUseCase,
     );
 
     app.addHook('onRequest', authMiddleware);
@@ -40,5 +43,9 @@ export async function productRoute(app: FastifyInstance) {
 
     app.get('/products', async (request, reply) => {
         return await productController.getAll(request, reply);
+    });
+
+    app.get('/products/:id', async (request, reply) => {
+        return await productController.getById(request, reply);
     });
 }
