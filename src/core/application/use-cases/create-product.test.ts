@@ -9,6 +9,7 @@ describe('Create product cases tests', () => {
     let useCase: CreateProductUseCase;
 
     const fakeProduct = () => ({
+        company_id: 1,
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
         cost_price: faker.number.int({ min: 100, max: 100000 }),
@@ -33,13 +34,15 @@ describe('Create product cases tests', () => {
         const product = fakeProduct();
 
         productRepositoryMock.getByName.resolves(null);
-        productRepositoryMock.create.resolves({ id: 1, ...product });
+        productRepositoryMock.create.resolves({ id: 1, ...product, status: true });
 
         const result = await useCase.execute(product);
 
         expect(result).to.have.property('id', 1);
         expect(productRepositoryMock.create.calledOnce).to.be.true;
-        expect(productRepositoryMock.getByName.calledWith(product.name)).to.be.true;
+        const createCall = productRepositoryMock.create.getCall(0);
+        expect(createCall.args[0]).to.have.property('status', true);
+        expect(productRepositoryMock.getByName.calledWith(product.name, product.company_id)).to.be.true;
     });
 
     it('product already exists', async () => {
@@ -111,6 +114,18 @@ describe('Create product cases tests', () => {
             await useCase.execute(product);
         } catch (error: any) {
             expect(error.message).to.equal("O preço de venda é obrigatório (cod.: 400048)");
+        }
+
+        expect(productRepositoryMock.create.called).to.be.false;
+    });
+
+    it('product company_id is required', async () => {
+        const product = { ...fakeProduct(), company_id: undefined };
+
+        try {
+            await useCase.execute(product as any);
+        } catch (error: any) {
+            expect(error.message).to.equal("O id da empresa (company_id) é obrigatório e deve ser informado no header x-company-id (cod.: 400098)");
         }
 
         expect(productRepositoryMock.create.called).to.be.false;

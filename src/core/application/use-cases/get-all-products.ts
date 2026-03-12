@@ -7,29 +7,28 @@ export class GetAllProductsUseCase {
         private productRepository: KnexProductRepository
     ) { }
 
-    async execute(params: { page: number, limit: number, company_id: number }) {
+    async execute(params: { page: number, limit: number, company_id: number, status?: boolean | undefined }) {
         const schema = z.object({
             page: z.number({
-                required_error: ErrorMessages.PRODUCT_PAGE_REQUIRED,
-                invalid_type_error: ErrorMessages.PRODUCT_PAGE_INVALID,
+                message: ErrorMessages.PRODUCT_PAGE_REQUIRED,
             })
                 .min(1, ErrorMessages.PRODUCT_PAGE_REQUIRED)
                 .max(50, ErrorMessages.PRODUCT_PAGE_MAX),
             limit: z.number({
-                required_error: ErrorMessages.PRODUCT_LIMIT_REQUIRED,
-                invalid_type_error: ErrorMessages.PRODUCT_LIMIT_INVALID,
+                message: ErrorMessages.PRODUCT_LIMIT_REQUIRED,
             })
                 .min(1, ErrorMessages.PRODUCT_LIMIT_REQUIRED)
                 .max(100, ErrorMessages.PRODUCT_LIMIT_MAX),
+            status: z.boolean().optional(),
         });
 
         const result = schema.safeParse(params);
         if (!result.success) {
-            throw new Error(result.error.issues[0].message);
+            throw new Error(result.error!.issues[0]!.message);
         }
 
-        const { page, limit } = result.data;
-        const products = await this.productRepository.getAll(page, limit, params.company_id);
+        const { page, limit, status } = result.data;
+        const products = await this.productRepository.getAll(page, limit, params.company_id, undefined, status);
         return products;
     }
 }

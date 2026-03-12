@@ -3,6 +3,7 @@ import type { CreateProductUseCase } from "../../../core/application/use-cases/c
 import type { UpdateProductUseCase } from "../../../core/application/use-cases/update-product.js";
 import type { DeleteProductUseCase } from "../../../core/application/use-cases/delete-product.js";
 import type { GetAllProductsUseCase } from "../../../core/application/use-cases/get-all-products.js";
+import type { GetProductByIdUseCase } from "../../../core/application/use-cases/get-product-by-id.js";
 
 export class ProductController {
     constructor(
@@ -10,6 +11,7 @@ export class ProductController {
         private readonly updateProductUseCase: UpdateProductUseCase,
         private readonly deleteProductUseCase: DeleteProductUseCase,
         private readonly getAllProductsUseCase: GetAllProductsUseCase,
+        private readonly getProductByIdUseCase: GetProductByIdUseCase,
     ) { }
 
     async create(request: FastifyRequest, reply: FastifyReply) {
@@ -36,8 +38,25 @@ export class ProductController {
 
     async getAll(request: FastifyRequest, reply: FastifyReply) {
         const company_id = Number(request.headers['x-company-id']);
-        const { page, limit } = request.query as any;
-        const products = await this.getAllProductsUseCase.execute({ page: Number(page), limit: Number(limit), company_id });
+        const { page, limit, status } = request.query as any;
+
+        let statusFilter: boolean | undefined = undefined;
+        if (status === "true") statusFilter = true;
+        else if (status === "false") statusFilter = false;
+
+        const products = await this.getAllProductsUseCase.execute({
+            page: Number(page),
+            limit: Number(limit),
+            company_id,
+            status: statusFilter
+        });
         return reply.status(200).send({ success: true, data: products });
+    }
+
+    async getById(request: FastifyRequest, reply: FastifyReply) {
+        const company_id = Number(request.headers['x-company-id']);
+        const { id } = request.params as any;
+        const product = await this.getProductByIdUseCase.execute({ id: Number(id), company_id });
+        return reply.status(200).send({ success: true, data: product });
     }
 }
